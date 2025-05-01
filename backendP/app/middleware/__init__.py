@@ -1,0 +1,1 @@
+from .block_metadata import BlockMetadataMiddleware

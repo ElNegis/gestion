@@ -1,0 +1,41 @@
+name: frontendweb_flutter
+description: "A new Flutter project."
+publish_to: 'none' # Prevents accidental publication to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.5.4 <4.0.0"
+
+dependencies:
+  path_provider: ^2.0.11
+  flutter:
+    sdk: flutter
+  http: ^1.2.2
+  shared_preferences: ^2.1.1
+  cupertino_icons: ^1.0.8
+  particle_field: ^1.0.0
+  rnd: ^0.2.0
+  provider: ^6.0.5
+  pdf: ^3.10.6
+  printing: ^5.12.1
+  intl: ^0.18.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/particle.png
+    - assets/images/metalize.png
+    - assets/images/SmilingFace.jpg
+    - assets/images/Metalize_banner.png
+
+  fonts:
+    - family: Pixeled
+      fonts:
+        - asset: assets/fonts/Pixeled.ttf

@@ -1,0 +1,47 @@
+services:
+  backend:
+    container_name: backendp
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DJANGO_DB_HOST=db
+      - DJANGO_DB_NAME=cotizador
+      - DJANGO_DB_USER=postgres
+      - DJANGO_DB_PASSWORD=postgres
+      - DJANGO_DB_PORT=5432
+      - DJANGO_ALLOWED_HOSTS=localhost,backend,frontendweb-flutter.vercel.app
+    depends_on:
+      - db
+    volumes:
+      - .:/app  # Sincronizar archivos del proyecto
+    command: >
+      bash -c "
+      until pg_isready -h db -p 5432 -U postgres; do
+        echo 'Esperando a la base de datos...';
+        sleep 1;
+      done;
+      python manage.py migrate &&
+      echo -e '============================================' &&
+      echo -e '   ¡Conexión Correcta!                  ' &&
+      echo -e '   Swagger disponible en:               ' &&
+      echo -e '   http://localhost:8000/api/docs/swagger/     ' &&
+      echo -e '============================================' &&
+      python manage.py runserver 0.0.0.0:8000"
+
+  db:
+    container_name: cotizador_db
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: cotizador
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:  # Volumen nombrado para la base de datos
