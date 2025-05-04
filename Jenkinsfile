@@ -9,7 +9,7 @@ pipeline {
         }
         stage('Build') {
             steps {
-                echo 'Construyendo...'
+                echo 'Construyendo... Panas modos seriales'
             }
         }
         stage('Tests') {
