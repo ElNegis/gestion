@@ -22,31 +22,21 @@ pipeline {
       }
     }
 
-    stage('Run Tests & Coverage') {
-      steps {
-        dir(PROJECT_DIR) {
-          bat """
-            REM Asegurar carpeta de reports
-            if not exist ..\\coverage-reports mkdir ..\\coverage-reports
-
-            REM Instalar coverage (si no viene en requirements)
-            py -3 -m pip install coverage
-
-            REM Ejecutar los tests con coverage y volcar JUnit XML
-            py -3 -m coverage run --source=clientes_ventas_cotizaciones manage.py test --verbosity=2 --junit-xml=..\\test-results.xml
-
-            REM Generar reporte de cobertura
-            py -3 -m coverage xml -o ..\\coverage-reports\\coverage.xml
-          """
-        }
-      }
-      post {
-        always {
-          junit 'test-results.xml'
-          cobertura coberturaReportFile: 'coverage-reports/coverage.xml'
-        }
-      }
+    stage('Run Tests & JUnit') {
+  steps {
+    dir(PROJECT_DIR) {
+      bat """
+        REM ejecutar pytest y generar XML
+        py -3 -m pytest --junitxml=..\\test-results.xml --maxfail=1 --disable-warnings
+      """
     }
+  }
+  post {
+    always {
+      junit 'test-results.xml'
+    }
+  }
+}
 
     stage('Code Quality') {
       steps {
