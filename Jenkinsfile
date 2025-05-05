@@ -6,14 +6,18 @@ pipeline {
   }
 
   stages {
+    stage('Checkout') {
+      steps { checkout scm }
+    }
+
     stage('Setup Environment') {
       steps {
         bat """
-          REM usa el Python Launcher
+          REM Actualizar pip
           py -3 -m pip install --upgrade pip
-          py -3 -m pip install -r backendP\requirements.txt
-          py -3 -m coverage run --source=clientes_ventas_cotizaciones manage.py test --verbosity=2 --junit-xml=..\test-results.xml
 
+          REM Instalar dependencias desde el archivo requirements.txt
+          py -3 -m pip install -r ${PROJECT_DIR}\\requirements.txt
         """
       }
     }
@@ -22,10 +26,16 @@ pipeline {
       steps {
         dir(PROJECT_DIR) {
           bat """
-            REM asegurar cobertura instalada
+            REM Asegurar carpeta de reports
+            if not exist ..\\coverage-reports mkdir ..\\coverage-reports
+
+            REM Instalar coverage (si no viene en requirements)
             py -3 -m pip install coverage
-            REM ejecutar tests y generar JUnit XML
+
+            REM Ejecutar los tests con coverage y volcar JUnit XML
             py -3 -m coverage run --source=clientes_ventas_cotizaciones manage.py test --verbosity=2 --junit-xml=..\\test-results.xml
+
+            REM Generar reporte de cobertura
             py -3 -m coverage xml -o ..\\coverage-reports\\coverage.xml
           """
         }
@@ -33,6 +43,7 @@ pipeline {
       post {
         always {
           junit 'test-results.xml'
+          cobertura coberturaReportFile: 'coverage-reports/coverage.xml'
         }
       }
     }
@@ -41,9 +52,8 @@ pipeline {
       steps {
         dir(PROJECT_DIR) {
           bat """
-            REM run linters
-            %PYTHON% -m pylint clientes_ventas_cotizaciones --output-format=parseable --reports=y > pylint-report.txt || exit 0
-            %PYTHON% -m flake8 clientes_ventas_cotizaciones --output-file=flake8-report.txt || exit 0
+            py -3 -m pylint clientes_ventas_cotizaciones --output-format=parseable --reports=y > pylint-report.txt || exit 0
+            py -3 -m flake8 clientes_ventas_cotizaciones --output-file=flake8-report.txt || exit 0
           """
         }
       }
@@ -59,14 +69,8 @@ pipeline {
   }
 
   post {
-    always {
-      cleanWs()
-    }
-    success {
-      echo '✅ Pipeline exitoso'
-    }
-    failure {
-      echo '❌ Pipeline falló'
-    }
+    always { cleanWs() }
+    success { echo '✅ Pipeline exitoso' }
+    failure { echo '❌ Pipeline falló' }
   }
 }
