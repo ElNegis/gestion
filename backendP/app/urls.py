@@ -15,5 +15,5 @@ urlpatterns = [
     path('api/docs/swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/docs/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     path('api/health/', HealthCheckView.as_view(), name='health-check'),
-    path('api/auth/refresh/', CustomTokenRefreshView.as_view(), name='token-refresh'),
+    # …path('api/auth/refresh/', CustomTokenRefreshView.as_view(), name='token-refresh'),
 ]
