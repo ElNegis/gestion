@@ -1,7 +1,9 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
+
 from .models import Cliente, Venta, Cotizacion
 from cotizador.models import Plancha, CortePlegado
 
@@ -68,9 +70,6 @@ class ClienteAPITest(APITestCase):
             is_staff=True
         )
         
-        # Simular que el usuario tiene permisos de Ventas
-        # Nota: En un entorno real, deberías configurar los permisos adecuadamente
-        
         # Autenticar al usuario
         self.client.force_authenticate(user=self.user)
         
@@ -84,28 +83,18 @@ class ClienteAPITest(APITestCase):
 
     def test_list_clientes(self):
         """Prueba para listar clientes"""
-        # Esta prueba podría fallar si no se configuran correctamente los permisos
-        # en un entorno real, ya que el código verifica permisos específicos
-        url = '/api/clientes/'
+        url = reverse('cliente-list')
         response = self.client.get(url)
-        
-        # Verificar que la respuesta sea exitosa
-        # Nota: En un entorno real, esto podría fallar debido a la verificación de permisos
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_create_cliente(self):
         """Prueba para crear un cliente"""
-        url = '/api/clientes/'
+        url = reverse('cliente-list')
         data = {
             'nombre': 'María',
             'apellido': 'González',
             'email': 'maria@example.com',
             'telefono': '555-5678'
         }
-        
-        # Esta prueba podría fallar si no se configuran correctamente los permisos
         response = self.client.post(url, data, format='json')
-        
-        # Verificar que la respuesta sea exitosa
-        # Nota: En un entorno real, esto podría fallar debido a la verificación de permisos
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
