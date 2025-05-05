@@ -18,6 +18,8 @@ pipeline {
 
       REM Instalar dependencias desde el archivo requirements.txt dentro de backendP
       py -3 -m pip install -r ${PROJECT_DIR}\\requirements.txt
+      py -3 -m pip install -r backendP\requirements.txt
+
     """
   }
 }
