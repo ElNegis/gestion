@@ -11,7 +11,9 @@ pipeline {
         bat """
           REM usa el Python Launcher
           py -3 -m pip install --upgrade pip
-          py -3 -m pip install -r ${PROJECT_DIR}\\requirements.txt
+          py -3 -m pip install -r backendP\requirements.txt
+          py -3 -m coverage run --source=clientes_ventas_cotizaciones manage.py test --verbosity=2 --junit-xml=..\test-results.xml
+
         """
       }
     }
