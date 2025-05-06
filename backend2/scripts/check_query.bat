@@ -1,13 +1,15 @@
-#!/usr/bin/env bash
-set -euo pipefail
+@echo off
+REM Smoke test para /api/query
 
-URL="http://localhost:3000/api/query?q=ci-test"
-HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
+REM Lanza curl y captura el código HTTP
+curl -s -o nul -w %%{http_code} "http://localhost:3000/api/query?q=ci-test" > temp.txt
+set /p HTTP_CODE=<temp.txt
+del temp.txt
 
-if [ "$HTTP_CODE" -eq 200 ]; then
-  echo "✅ /api/query OK (200)"
-  exit 0
-else
-  echo "❌ /api/query falló con HTTP $HTTP_CODE"
-  exit 1
-fi
+if "%HTTP_CODE%"=="200" (
+  echo ✅ /api/query OK (200)
+  exit /b 0
+) else (
+  echo ❌ /api/query falló con HTTP %HTTP_CODE%
+  exit /b 1
+)
