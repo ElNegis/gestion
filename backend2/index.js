@@ -24,9 +24,26 @@ app.get('/planchas', async (req, res) => {
 
   res.json(data);
   
-  });
+});
 
 export default app;
+
+app.post('/planchas', async (req, res) => {
+
+  let id = null;
+  
+  if (admin.apps.length > 0) {
+  
+    const db = admin.firestore();
+    const ref = await db.collection('planchas').add(req.body);
+    id = ref.id;
+  }
+  
+  res.json({ id });
+  
+});
+  
+  
 
 if (process.env.NODE_ENV !== 'test') {
   const PORT = process.env.PORT || 3000;
