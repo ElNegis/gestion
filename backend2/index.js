@@ -2,16 +2,24 @@
 import express from 'express';
 import admin from './firebaseConfig.js';
 
-const db = admin.firestore();
+//const db = admin.firestore();
 const app = express();
 app.use(express.json());
 
 // Listar todas las planchas
 app.get('/planchas', async (req, res) => {
-  const snapshot = await db.collection('planchas').get();
-  const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+  let data = [];
+  
+  if (admin.apps.length > 0) {
+    const db = admin.firestore();
+    const snapshot = await db.collection('planchas').get();
+    data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  }
+
   res.json(data);
-});
+  
+  });
 
 export default app;
 
