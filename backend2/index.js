@@ -28,8 +28,7 @@ app.get('/planchas', async (req, res) => {
 
 export default app;
 
-// Arrancar el servidor sólo si index.js se ejecuta directamente
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.env.NODE_ENV !== 'test') {
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => console.log(`Servidor corriendo en http://localhost:${PORT}`));
 }
