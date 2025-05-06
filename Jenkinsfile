@@ -21,13 +21,18 @@ pipeline {
       }
     }
     stage('Smoke Test Service') {
-      steps {
-        dir(PROJECT_DIR) {
-          bat 'scripts\\check_query.bat'
+  steps {
+    dir(PROJECT_DIR) {
+      script {
+        if (!fileExists('scripts/check_query.bat')) {
+          error "❌ No encuentro backend2/scripts/check_query.bat ¡Asegúrate de commitearlo!"
         }
+        // Si existe, ejecútalo. Con returnStatus opcionalmente capturas el exit code.
+        bat returnStatus: false, script: 'scripts\\check_query.bat'
       }
     }
   }
+}
 
   post {
     always {
