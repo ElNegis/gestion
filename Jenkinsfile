@@ -1,17 +1,11 @@
 pipeline {
   agent any
-
   environment {
-    PROJECT_DIR            = 'backendP'
-    DJANGO_SETTINGS_MODULE = 'app.settings'               // <-- CAMBIADO
+    PROJECT_DIR = 'backendP'
   }
-
   stages {
-    stage('Checkout') {
-      steps { checkout scm }
-    }
-
-    stage('Setup Environment') {
+    stage('Checkout')      { steps { checkout scm } }
+    stage('Setup Env')     {
       steps {
         bat """
           py -3 -m pip install --upgrade pip
@@ -19,35 +13,18 @@ pipeline {
         """
       }
     }
-
-    stage('Prepare Test DB') {
+    stage('Run Tests')     {
       steps {
         dir(PROJECT_DIR) {
           bat """
-            set DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}
-            py -3 manage.py migrate --noinput
-          """
-        }
-      }
-    }
-
-    stage('Run Tests & JUnit') {
-      steps {
-        dir(PROJECT_DIR) {
-          bat """
-            set DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}
             py -3 -m pytest --junitxml=..\\test-results.xml --maxfail=1 --disable-warnings
           """
         }
       }
-      post {
-        always { junit 'test-results.xml' }
-      }
+      post { always { junit 'test-results.xml' } }
     }
-
-    // … otros stages …
+    // …resto…
   }
-
   post {
     always { cleanWs() }
     success { echo '✅ Pipeline exitoso' }
