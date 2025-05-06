@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'roles_permisos',
     'corsheaders',
     'clientes_ventas_cotizaciones',
+    'mi_microservicio',
 ]
 
 
@@ -70,6 +71,7 @@ SPECTACULAR_SETTINGS = {
         {'name': 'Clientes', 'description': 'Operaciones relacionadas con clientes.'},
         {'name': 'Ventas', 'description': 'Operaciones relacionadas con ventas.'},
         {'name': 'Cotizaciones', 'description': 'Operaciones relacionadas con cotizaciones.'},
+        {'name': 'MiMicroservicio', 'description': 'Operaciones relacionadas con mi microservicio.'},
     ],
 }
 
