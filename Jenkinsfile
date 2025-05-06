@@ -1,39 +1,71 @@
 pipeline {
   agent any
+
   environment {
-    PROJECT_DIR = 'backendP'
+    PROJECT_DIR = 'backend2'
   }
+
   stages {
-    stage('Checkout')      { steps { checkout scm } }
-    stage('Setup Env')     {
+    stage('Checkout') {
       steps {
-        bat """
-          py -3 -m pip install --upgrade pip
-          py -3 -m pip install -r ${PROJECT_DIR}\\requirements.txt
-        """
+        checkout scm
       }
     }
-    stage('Run Tests')     {
+
+    stage('Install & Test') {
       steps {
         dir(PROJECT_DIR) {
-          bat """
-            REM Ejecutar pytest sólo sobre la carpeta tests
-            py -3 -m pytest tests --junitxml=..\\test-results.xml --maxfail=1 --disable-warnings
-          """
+          // Instala dependencias limpias
+          bat 'npm ci'
+
+          // Ejecuta los tests unitarios/integración con Jest y publica el reporte
+          bat 'npm test'
         }
       }
       post {
         always {
-          // Jenkins recogerá el XML generado en la raíz del workspace
-          junit 'test-results.xml'
+          // Recoge los resultados JUnit (ajusta la ruta según tu configuración)
+          junit "${PROJECT_DIR}/junit/results.xml"
         }
       }
     }
-    // …resto…
+
+    stage('Start Service') {
+      steps {
+        dir(PROJECT_DIR) {
+          // Arranca tu servidor en background
+          // En Windows: start /B corre en background
+          bat 'start /B npm start'
+
+          // Espera unos segundos a que el servicio esté arriba
+          bat 'timeout /T 5 /NOBREAK'
+        }
+      }
+    }
+
+    stage('Smoke Test Service') {
+      steps {
+        dir(PROJECT_DIR) {
+          // Usa tu script de comprobación para verificar /api/query
+          bat 'scripts\\check_query.sh'
+        }
+      }
+    }
   }
+
   post {
-    always { cleanWs() }
-    success { echo '✅ Pipeline exitoso' }
-    failure { echo '❌ Pipeline falló' }
+    always {
+      // Asegúrate de parar todos los procesos Node que levantaste
+      bat 'taskkill /F /IM node.exe || echo "No hay procesos node que parar"'
+
+      // Limpia el workspace
+      cleanWs()
+    }
+    success {
+      echo '✅ Pipeline exitoso'
+    }
+    failure {
+      echo '❌ Pipeline falló'
+    }
   }
 }
