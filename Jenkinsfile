@@ -42,11 +42,11 @@ pipeline {
         dir(PROJECT_DIR) {
           script {
             // Verificar que el script existe
-            if (!fileExists('scripts/check_query.bat')) {
-              error "❌ No encuentro backend2/scripts/check_query.bat – ¿lo has commiteado?"
+            if (!fileExists('scripts/check_endpoints.bat')) {
+              error "❌ No encuentro backend2/scripts/check_endpoints.bat – ¿lo has commiteado?"
             }
             // Ejecutar el batch y fallar si devuelve código distinto de 0
-            bat 'scripts\\check_query.bat'
+            bat 'scripts\\check_endpoints.bat'
           }
         }
       }
