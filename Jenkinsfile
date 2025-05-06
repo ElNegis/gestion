@@ -17,11 +17,17 @@ pipeline {
       steps {
         dir(PROJECT_DIR) {
           bat """
-            py -3 -m pytest --junitxml=..\\test-results.xml --maxfail=1 --disable-warnings
+            REM Ejecutar pytest sólo sobre la carpeta tests
+            py -3 -m pytest tests --junitxml=..\\test-results.xml --maxfail=1 --disable-warnings
           """
         }
       }
-      post { always { junit 'test-results.xml' } }
+      post {
+        always {
+          // Jenkins recogerá el XML generado en la raíz del workspace
+          junit 'test-results.xml'
+        }
+      }
     }
     // …resto…
   }
