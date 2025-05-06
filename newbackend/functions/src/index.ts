@@ -9,6 +9,10 @@
 
 import {onRequest} from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
+import * as users from '../users';
+
+// Exporta todas las funciones del módulo de usuarios
+export const userFunctions = users;
 
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
