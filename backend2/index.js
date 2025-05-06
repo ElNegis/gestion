@@ -13,4 +13,9 @@ app.get('/planchas', async (req, res) => {
   res.json(data);
 });
 
-app.listen(3000,()=> console.log('API Firestore OK'));
+export default app;
+
+// Sólo arranca el servidor si este módulo se ejecuta directamente:
+if (import.meta.url === `file://${process.argv[1]}`) {
+  app.listen(PORT, () => console.log(`Servidor corriendo en http://localhost:${PORT}`));
+}
