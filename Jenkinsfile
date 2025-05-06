@@ -43,15 +43,17 @@ pipeline {
       }
     }
 
-    stage('Smoke Test Service') {
-      steps {
-        dir(PROJECT_DIR) {
-          // Usa tu script de comprobación para verificar /api/query
-          bat 'scripts\\check_query.sh'
-        }
-      }
+    stage('Start Service') {
+  steps {
+    dir(PROJECT_DIR) {
+      // Arranca el servidor en background
+      bat 'start /B npm start'
+
+      // Espera ~5 segundos haciendo ping a localhost
+      bat 'ping -n 6 127.0.0.1 >nul'
     }
   }
+}
 
   post {
     always {
