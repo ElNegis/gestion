@@ -2,31 +2,15 @@
 import express from 'express';
 import admin from './firebaseConfig.js';
 
+const db = admin.firestore();
 const app = express();
-const PORT = process.env.PORT || 3000;
+app.use(express.json());
 
-app.get('/api/query', async (req, res) => {
-  const q = req.query.q || '';
-
-  // Sólo tratamos de usar Firestore si la app está inicializada
-  if (admin.apps && admin.apps.length > 0) {
-    const db = admin.firestore();
-    // Ejemplo: guardar la consulta
-    // await db.collection('queries').add({ texto: q, ts: Date.now() });
-  } else {
-    // En test o si no hay credenciales, simplemente no guardamos nada
-    console.log('⚠️ Firebase Admin no inicializado, salto guardado en Firestore');
-  }
-
-  res.json({ resultado: `Recibido: ${q}` });
+// Listar todas las planchas
+app.get('/planchas', async (req, res) => {
+  const snapshot = await db.collection('planchas').get();
+  const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  res.json(data);
 });
 
-// Exporta la app para Supertest
-export default app;
-
-// Arranca el servidor sólo si index.js se ejecuta directamente
-if (import.meta.url === `file://${process.argv[1]}`) {
-  app.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
-  });
-}
+app.listen(3000,()=> console.log('API Firestore OK'));
