@@ -23,12 +23,15 @@ pipeline {
         }
       }
       post {
-        always {
-          // Recoge los resultados JUnit (ajusta la ruta según tu configuración)
-          junit "${PROJECT_DIR}/junit/results.xml"
-        }
-      }
+  always {
+    dir(PROJECT_DIR) {
+      // Aunque taskkill falle, returnStatus evita que la etapa aborte
+      bat returnStatus: true, script: 'taskkill /F /IM node.exe 2>nul || echo No hay procesos node que parar'
     }
+    cleanWs()
+  }
+}
+
 
     stage('Start Service') {
       steps {
@@ -36,9 +39,8 @@ pipeline {
           // Arranca tu servidor en background
           // En Windows: start /B corre en background
           bat 'start /B npm start'
-
-          // Espera unos segundos a que el servicio esté arriba
-          bat 'timeout /T 5 /NOBREAK'
+// espera ~5s usando ping
+          bat 'ping -n 6 127.0.0.1 >nul'  
         }
       }
     }
