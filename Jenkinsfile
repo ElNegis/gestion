@@ -29,9 +29,9 @@ pipeline {
     stage('Start Service') {
       steps {
         dir(PROJECT_DIR) {
-          // Arranca en background
+          // Arranca el servidor en segundo plano
           bat 'start /B npm start'
-          // Espera ~5s sin timeout
+          // Espera aproximadamente 5 segundos usando ping
           bat 'ping -n 6 127.0.0.1 >nul'
         }
       }
@@ -41,11 +41,11 @@ pipeline {
       steps {
         dir(PROJECT_DIR) {
           script {
-            // Verificar que el script existe
+            // Verifica que el batch existe en scripts/
             if (!fileExists('scripts/check_endpoints.bat')) {
-              error "❌ No encuentro backend2/scripts/check_endpoints.bat – ¿lo has commiteado?"
+              error "❌ No encuentro ${PROJECT_DIR}/scripts/check_endpoints.bat – ¿lo has commiteado?"
             }
-            // Ejecutar el batch y fallar si devuelve código distinto de 0
+            // Ejecuta el batch: fallará si devuelve código distinto de 0
             bat 'scripts\\check_endpoints.bat'
           }
         }
@@ -56,7 +56,7 @@ pipeline {
   post {
     always {
       dir(PROJECT_DIR) {
-        // Parar cualquier proceso node restante, pero no abortar si falla
+        // Para cualquier proceso node que haya quedado, sin abortar si falla
         bat returnStatus: true, script: 'taskkill /F /IM node.exe 2>nul || echo No hay procesos node que parar'
       }
       cleanWs()
