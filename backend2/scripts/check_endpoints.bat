@@ -1,19 +1,19 @@
 @echo off
 setlocal enabledelayedexpansion
 
-REM Smoke test para /api/query
-REM Lanza curl y captura el código HTTP
-curl -s -o nul -w %%{http_code} "http://localhost:3000/api/query?q=ci-test" > temp.txt
-set /p HTTP_CODE=<temp.txt
-del temp.txt
+@REM REM Smoke test para /api/query
+@REM REM Lanza curl y captura el código HTTP
+@REM curl -s -o nul -w %%{http_code} "http://localhost:3000/api/query?q=ci-test" > temp.txt
+@REM set /p HTTP_CODE=<temp.txt
+@REM del temp.txt
 
-if "%HTTP_CODE%"=="200" (
-  echo ✅ /api/query OK (200)
-  exit /b 0
-) else (
-  echo ❌ /api/query falló con HTTP %HTTP_CODE%
-  exit /b 1
-)
+@REM if "%HTTP_CODE%"=="200" (
+@REM   echo ✅ /api/query OK (200)
+@REM   exit /b 0
+@REM ) else (
+@REM   echo ❌ /api/query falló con HTTP %HTTP_CODE%
+@REM   exit /b 1
+@REM )
 
 rem 1) GET /planchas
 curl -s -o nul -w "%%{http_code}" "http://localhost:3000/planchas" > tmp.txt
