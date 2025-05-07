@@ -42,7 +42,7 @@ pipeline {
         dir(PROJECT_DIR) {
           script {
             // Verifica que el batch existe en scripts/
-            if (!fileExists('scripts/check_endpoints.bat')) {
+            if (!fileExists('scripts/check_query.bat')) {
               error "❌ No encuentro ${PROJECT_DIR}/scripts/check_endpoints.bat – ¿lo has commiteado?"
             }
             // Ejecuta el batch: fallará si devuelve código distinto de 0
