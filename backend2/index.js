@@ -12,6 +12,41 @@ app.get('/api/query', (req, res) => {
 });
 
 // Listar todas las planchas
+/**
+ * @openapi
+ * /planchas:
+ *   get:
+ *     summary: Listar todas las planchas
+ *     responses:
+ *       200:
+ *         description: Lista de planchas
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                   tipo:
+ *                     type: string
+ */
+app.get('/planchas', async (req, res) => { /* ... */ });
+
+app.get('/planchas', async (req, res) => {
+
+  let data = [];
+  
+  if (admin.apps.length > 0) {
+    const db = admin.firestore();
+    const snapshot = await db.collection('planchas').get();
+    data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  }
+
+  res.json(data);
+  
+});
 
 export default app;
 
